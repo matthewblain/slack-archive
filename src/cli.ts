@@ -2,6 +2,7 @@ import { uniqBy } from "lodash-es";
 import inquirer from "inquirer";
 import fs from "fs-extra";
 import { User } from "@slack/web-api/dist/response/UsersInfoResponse";
+import { Users, SlackArchiveChannelData } from "./interfaces.js";
 import { Channel } from "@slack/web-api/dist/response/ConversationsListResponse";
 import ora from "ora";
 
@@ -17,6 +18,7 @@ import {
   DATE_FILE,
   EMOJIS_DATA_PATH,
   NO_SLACK_CONNECT,
+  USE_PREVIOUS_CHANNEL_CONFIG,
 } from "./config.js";
 import { downloadExtras } from "./messages.js";
 import { downloadMessages } from "./messages.js";
@@ -217,6 +219,42 @@ async function getAuthTest() {
   return result;
 }
 
+
+export async function getAndSelectChannels(
+  channelTypes: string,
+  users: Users,
+  previouslyDownloadedChannels: Record<string, SlackArchiveChannelData>,
+): Promise<Array<Channel>> {
+  const channels = await downloadChannels({ types: channelTypes }, users);
+  if (USE_PREVIOUS_CHANNEL_CONFIG) {
+      function inPreviousConfig(channel: Channel) : boolean {
+          if (!channel.id) {
+              return false;
+          }
+          return channel.id in previouslyDownloadedChannels;
+      }
+      const previousChannelIds = Object.keys(previouslyDownloadedChannels);
+      const selectedChannels: Array<Channel> = channels.filter(inPreviousConfig);
+      console.log("SELECTED CHANNELS availchannels");
+      console.log(previousChannelIds);
+
+      console.log("SELECTED CHANNELS prevval");
+      console.log(previouslyDownloadedChannels);
+      console.log("SELECTED CHANNELS nowval");
+      console.log(selectedChannels);
+      console.log("SELECTED CHANNELS prevlen");
+      console.log(previousChannelIds.length);
+      console.log("SELECTED CHANNELS nowlen");
+      console.log(selectedChannels.length);
+      return selectedChannels
+  } else {
+    const selectedChannels = await selectChannels(channels);
+    return selectedChannels;
+  }
+  
+}
+
+
 export async function main() {
   console.log(`Welcome to slack-archive${getLastSuccessfulRun()}`);
 
@@ -237,8 +275,10 @@ export async function main() {
 
   slackArchiveData.auth = await getAuthTest();
 
-  const channels = await downloadChannels({ types: channelTypes }, users);
-  const selectedChannels = await selectChannels(channels);
+
+  const selectedChannels = await getAndSelectChannels(channelTypes, users,
+    slackArchiveData.channels);
+  
   const newMessages: Record<string, number> = {};
 
   // Emoji
@@ -263,6 +303,7 @@ export async function main() {
     selectedChannels,
     newMessages
   );
+
   await createHtmlForChannels(channelsToCreateFilesFor);
 
   // Create search file
