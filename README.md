@@ -28,8 +28,9 @@ npx slack-archive
 
 ```
 --automatic:                Don't prompt and automatically fetch all messages from all channels.
---channel-types             Comma-separated list of channel types to fetch messages from.
+--channel-types:            Comma-separated list of channel types to fetch messages from.
                             (public_channel, private_channel, mpim, im)
+--use-previous-channel-config: Fetch messages from channels selected in previous run instead of prompting.
 --no-backup:                Don't create backups. Not recommended.
 --no-search:                Don't create a search file, saving disk space.
 --no-file-download:         Don't download files.
