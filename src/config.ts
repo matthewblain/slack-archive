@@ -20,7 +20,6 @@ function findCliParameter(param: string) {
   return false;
 }
 
-export const AUTOMATIC_MODE = findCliParameter("--automatic");
 export const NO_BACKUP = findCliParameter("--no-backup");
 export const NO_SEARCH = findCliParameter("--no-search");
 export const NO_FILE_DOWNLOAD = findCliParameter("--no-file-download");
@@ -31,6 +30,7 @@ export const FORCE_HTML_GENERATION = findCliParameter(
 export const USE_PREVIOUS_CHANNEL_CONFIG = findCliParameter(
   "--use-previous-channel-config"
 );
+export const AUTOMATIC_MODE = USE_PREVIOUS_CHANNEL_CONFIG || findCliParameter("--automatic");
 export const BASE_DIR = process.cwd();
 export const OUT_DIR = path.join(BASE_DIR, "slack-archive");
 export const TOKEN_FILE = path.join(OUT_DIR, ".token");

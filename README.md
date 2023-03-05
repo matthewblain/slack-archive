@@ -28,6 +28,7 @@ npx slack-archive
 
 ```
 --automatic:                Don't prompt and automatically fetch all messages from all channels.
+--use-previous-channel-config: Like automatic--don't prompt; fetch messages from channels selected in previous run.
 --no-backup:                Don't create backups. Not recommended.
 --no-search:                Don't create a search file, saving disk space.
 --no-file-download:          Don't download files.

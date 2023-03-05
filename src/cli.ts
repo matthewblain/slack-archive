@@ -256,6 +256,9 @@ export async function main() {
   if (AUTOMATIC_MODE) {
     console.log(`Running in fully automatic mode without prompts`);
   }
+  if (USE_PREVIOUS_CHANNEL_CONFIG) {
+    console.log(`Using previous channel selection.`);
+  }
 
   if (NO_SLACK_CONNECT) {
     console.log(`Not connecting to Slack and skipping all Slack API calls`);
