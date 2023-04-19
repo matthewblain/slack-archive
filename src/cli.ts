@@ -117,7 +117,7 @@ async function selectChannelTypes(): Promise<Array<string>> {
     return CHANNEL_TYPES.split(',');
   }
 
-  if (AUTOMATIC_MODE || NO_SLACK_CONNECT) {
+  if (AUTOMATIC_MODE || USE_PREVIOUS_CHANNEL_CONFIG || NO_SLACK_CONNECT) {
     return ["public_channel", "private_channel", "mpim", "im"];
   }
 
